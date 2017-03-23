@@ -1,4 +1,4 @@
-/* global World GridMask TiledImage Entity Bat GameImage */
+/* global World GridMask TiledImage Entity Bat GameImage Brick GameSprite Ball ScoreBoard MenuWorld */
 class PlayWorld extends World {
     constructor(game, _w, _h, _bfor) {
         super(game);
@@ -22,7 +22,20 @@ class PlayWorld extends World {
             let _spr = new GameSprite(game.requestImage("bricks"), 48, 24);
             this.addEntity(new Brick(_x, _y, _spr, _c));
         }
-        this.addEntity(new Bat(240, 612, new GameImage(game.requestImage("bat")), null));
-        this.addEntity(new Ball(250, 604));
+        this.addEntity(new Bat(240, 564, new GameImage(game.requestImage("bat")), null));
+        this.addEntity(new Ball(250, 508));
+        let scoreBoard = new ScoreBoard();
+        this.addEntity(scoreBoard);
+        this.setScoreBoard = (_sb) => {
+            if (this.findByName("score_board")) {
+                this.entityList.pop();
+            }
+            scoreBoard = _sb;
+            this.addEntity(_sb);
+        };
+        this.gotoMenu = (_loc) => {
+            this.getGame().setWorld(new MenuWorld(this.getGame(), _loc));
+        };
     }
+    
 }

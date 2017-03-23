@@ -15,6 +15,9 @@ class World {
         this.requestImage = (key) => {
             return game.requestImage(key);
         };
+        this.requestSound = (key) => {
+            return game.requestSound(key);
+        };
         this.getGame = () => {
             return game;
         };

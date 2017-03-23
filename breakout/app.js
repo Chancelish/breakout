@@ -4,6 +4,7 @@ class MyGame {
         MyGame.WIDTH = width;
         MyGame.HEIGHT = height;
         MyGame.SCALE = scale;
+        this.muted = false;
         this.imgs = [];
         this.maps = [];
         this.snds = [];
@@ -18,6 +19,10 @@ class MyGame {
         this.lvlsToLoad = 0;
         this.gameLoop = () => {
             if (this.running) {
+                if (!document.hasFocus()) {
+                    requestAnimationFrame((this.gameLoop));
+                    return;
+                }
                 this.now = Date.now();
                 this.delta = this.now - this.lastTime;
                 this.timer += this.delta;
@@ -60,10 +65,19 @@ class MyGame {
         this.keyManager.preUpdate("Right");
         this.keyManager.preUpdate("Enter");
         this.keyManager.preUpdate("Escape");
-        this.keyManager.preUpdate("Space");
+        this.keyManager.preUpdate(" ");
+        this.keyManager.preUpdate("m");
         this.keyManager.preUpdate("x");
         this.keyManager.preUpdate("z");
         if (this.world) {
+            if (this.requestKeyData("m", "pressed")) {
+                if (this.muted) {
+                    this.unmute();
+                }
+                else {
+                    this.mute();
+                }
+            }
             this.world.update(_dt);
             this.world.cleanup();
         }
@@ -77,7 +91,8 @@ class MyGame {
         this.keyManager.postUpdate("Right");
         this.keyManager.postUpdate("Enter");
         this.keyManager.postUpdate("Escape");
-        this.keyManager.postUpdate("Space");
+        this.keyManager.postUpdate(" ");
+        this.keyManager.postUpdate("m");
         this.keyManager.postUpdate("x");
         this.keyManager.postUpdate("z");
     }
@@ -99,6 +114,10 @@ class MyGame {
         this.imgs[_key].src = _path;
         this.imgsToLoad++;
     }
+    addSound(_key, _path) {
+        this.snds[_key] = new Audio();
+        this.snds[_key].src = _path;
+    }
     /**
      * Adds a level to the game and stores as an xml request
      * @param _key
@@ -116,10 +135,16 @@ class MyGame {
      * Override This: Loads in images and levels.
      */
     loadImages() {
+        this.addSound("mus1", "./assets/determination.mp3");
+        this.addSound("mus2", "./assets/covert_operations.mp3");
+        this.addSound("low", "./assets/block_low.mp3");
+        this.addSound("mid", "./assets/block_mid.mp3");
+        this.addSound("high", "./assets/block_high.mp3");
         this.addImage("border", "./assets/border.png");
         this.addImage("bricks", "./assets/bricks.png");
         this.addImage("bat", "./assets/bat.png");
         this.addImage("robber", "./assets/robber.png");
+        this.addImage("title", "./assets/titlelogo.png");
     }
     loadLevels() {
         this.addLevelXML("default", "./assets/default.xml");
@@ -163,10 +188,27 @@ class MyGame {
         return this.imgs[name];
     }
     requestSound(name) {
-        return this.snd[name];
+        return this.snds[name];
     }
     requestMapData(name) {
         return this.maps[name];
+    }
+    mute() {
+        for (let sound in this.snds) {
+            this.snds[sound].volume = 0;
+            this.snds[sound].pause();
+            this.snds[sound].currentTime = 0;
+        }
+        this.muted = true;
+    }
+    unmute() {
+        for (let sound in this.snds) {
+            this.snds[sound].volume = 1;
+        }
+        if (this.snds["mus1"].paused && this.snds["mus1"].paused) {
+            this.snds["mus1"].play();
+        }
+        this.muted = false;
     }
 }
 MyGame.WIDTH = 720;

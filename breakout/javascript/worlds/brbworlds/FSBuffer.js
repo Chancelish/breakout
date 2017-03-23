@@ -7,7 +7,7 @@ class FSBuffer extends World {
     update(_dt) {
         this.timer -= 1;
         if (this.timer <= 0) {
-            this.getGame().setWorld(new PlayWorld(this.getGame(), 720, 768, "default"));
+            this.getGame().setWorld(new MenuWorld(this.getGame(), "main"));
         }
     }
 }
